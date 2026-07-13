@@ -75,7 +75,7 @@ resource "azuread_application_federated_identity_credential" "github_actions_fed
   description           = "Federated credential for GitHub Actions"
   audiences             = ["api://AzureADTokenExchange"]
   issuer                = "https://token.actions.githubusercontent.com"
-  subject               = "repo:${var.github_user}/${var.github_name}:*"
+  subject               = "repo:${var.github_user}/${var.github_name}:ref:refs/heads/main"
 }
 
 # 8. Roll tilldelning (Contributor)
