@@ -1,0 +1,23 @@
+# pre-commit configuration for Terraform projects
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+
+repos:
+  # Standard Git Hooks (bästa praxis för kodhygien)
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: trailing-whitespace      # Tar bort onödiga mellanslag i slutet av rader
+      - id: end-of-file-fixer        # Säkerställer att filer slutar med en tom rad
+      - id: check-yaml               # Kontrollerar att YAML-filer är korrekta
+      - id: check-merge-conflict     # Hittar glömda merge-konfliktsmarkörer (<<<<<<<)
+      - id: check-added-large-files  # Hindrar att man råkar pusha jättefiler till Git
+
+  # Terraform-specifika hooks (kräver pre-commit-terraform)
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.92.0
+    hooks:
+      - id: terraform_fmt            # Formaterar automatiskt all tf-kod (motsvarar terraform fmt)
+      - id: terraform_validate       # Validerar syntaxen (motsvarar terraform validate)
+      - id: terraform_tflint         # Linter för Azure best practices (kräver tflint installerat lokalt)
+      - id: terraform_tfsec          # Säkerhetsscanning för kända sårbarheter (t.ex. öppna portar)
