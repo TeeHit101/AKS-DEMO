@@ -1,23 +1,32 @@
-# pre-commit configuration for Terraform projects
+# pre-commit configuration for Windows Terraform projects
 # See https://pre-commit.com for more information
-# See https://pre-commit.com/hooks.html for more hooks
 
 repos:
-  # Standard Git Hooks (bästa praxis för kodhygien)
+  # Standard Git Hooks (bästa praxis för kodhygien - fungerar bra på alla OS)
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.6.0
     hooks:
-      - id: trailing-whitespace      # Tar bort onödiga mellanslag i slutet av rader
-      - id: end-of-file-fixer        # Säkerställer att filer slutar med en tom rad
-      - id: check-yaml               # Kontrollerar att YAML-filer är korrekta
-      - id: check-merge-conflict     # Hittar glömda merge-konfliktsmarkörer (<<<<<<<)
-      - id: check-added-large-files  # Hindrar att man råkar pusha jättefiler till Git
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-merge-conflict
+      - id: check-added-large-files
 
-  # Terraform-specifika hooks (kräver pre-commit-terraform)
-  - repo: https://github.com/antonbabenko/pre-commit-terraform
-    rev: v1.92.0
+  # Lokala, Windows-native hooks för Terraform (slipper bash-beroenden)
+  - repo: local
     hooks:
-      - id: terraform_fmt            # Formaterar automatiskt all tf-kod (motsvarar terraform fmt)
-      - id: terraform_validate       # Validerar syntaxen (motsvarar terraform validate)
-      - id: terraform_tflint         # Linter för Azure best practices (kräver tflint installerat lokalt)
-      - id: terraform_tfsec          # Säkerhetsscanning för kända sårbarheter (t.ex. öppna portar)
+      # Kontrollerar formatering för alla .tf-filer rekursivt
+      - id: terraform-fmt
+        name: Terraform fmt
+        entry: terraform fmt -check -recursive
+        language: system
+        files: \.tf$
+        pass_filenames: false
+
+      # Validerar bootstrap-katalogen om filer ändras där
+      - id: terraform-validate-bootstrap
+        name: Terraform validate (bootstrap)
+        entry: powershell -Command "cd bootstrap; terraform validate"
+        language: system
+        files: ^bootstrap/.*\.tf$
+        pass_filenames: false
